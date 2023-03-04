@@ -170,11 +170,11 @@ def generate_frames():
         #            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
-@app.route('/')
-def videopage():
-    return render_template('videopage.html')
+# @app.route('/')
+# def videopage():
+#     return render_template('videopage.html')
 
-@app.route('/first')
+@app.route('/')
 def first():
     return render_template('first.html')
 
