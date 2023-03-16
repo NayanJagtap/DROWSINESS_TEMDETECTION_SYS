@@ -1,10 +1,23 @@
+from sqlite3 import Cursor
 from ssl import SSLSession
-from flask import Flask,render_template,Response
+from urllib import request
+from flask import Flask,render_template,request,redirect,url_for,session
+from flask_mysqldb import MySQL
+import MySQLdb.cursors
 import cv2
 
 app=Flask(__name__)
 #camera=cv2.VideoCapture(0)
-
+app.secret_key="login"
+#database connection details
+app.config['MYSQL_HOST']='localhost'
+app.config['MYSQL_USER']='root'
+app.config['MYSQL_PASSWORD']=''
+app.config['MYSQL_DB']='drowsiness_detection_system'
+#conn=mysql.connector.connect(host="sql12.freesqldatabase.com",user="sql12604243",password="bQAq7uTvqJ",database="sql12604243")
+#cursor=conn.cursor()
+#initilize mysql 
+mysql=MySQL(app)
 def generate_frames():
    while True:
             
@@ -194,6 +207,59 @@ def loginforowner():
 @app.route('/registration')
 def registration():
     return render_template('registration.html')
+
+@app.route('/login_validation',methods=['GET','POST'])
+def login_validation():
+    msg=' something went wrong'
+     # Check if "username" and "password" POST requests exist (user submitted form)
+    if request.method=='POST' and 'email' in request.form and 'password' in request.form:
+        email=request.form['email']
+        password=request.form['password']
+        # Check if account exists using MySQL
+        cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password,))
+        # Fetch one record and return result
+        account = cursor.fetchone()
+                # If account exists in accounts table in out database
+        if account:
+            # Create session data, we can access this data in other routes
+            session['loggedin'] = True
+            session['id'] = account['user_id']
+            session['email'] = account['email']
+            # Redirect to home page
+            return redirect(url_for('home'))
+        else:
+            # Account doesnt exist or username/password incorrect
+            msg = 'Incorrect username/password!'
+
+    return render_template('loginforowner.html',msg='')
+
+@app.route('/login_validation/home')
+def home():
+    # Check if user is loggedin
+    if 'loggedin' in session:
+        # User is loggedin show them the home page
+        return render_template('homepage.html', email=session['email'])
+    # User is not loggedin redirect to login page
+    return redirect(url_for('loginforowner'))
+
+@app.route('/DriverLogin')
+def DriverLogin():
+    return render_template('DriverLogin.html')
+
+
+
+
+
+##########################################################################################################
+####### for homepage.html ##############
+@app.route('/names')
+def names():
+    
+    sql = "SELECT name FROM drivers"
+    mycursor.execute(sql)
+    result = mycursor.fetchall()
+    return render_template('second.html', names=result)
 
 
 @app.route('/video')
