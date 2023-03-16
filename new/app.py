@@ -1,15 +1,28 @@
+
+
 from sqlite3 import Cursor
 from ssl import SSLSession
 from urllib import request
-from flask import Flask,render_template,request,redirect,url_for,session
+from flask import Flask,render_template,request,redirect,url_for,session,Response
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import cv2
+import mysql.connector
 
 app=Flask(__name__)
 #camera=cv2.VideoCapture(0)
 app.secret_key="login"
 #database connection details
+
+
+# Establish a connection to the MySQL database
+db = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="",
+  database="drowsiness_detection_system"
+)
+
 app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']=''
@@ -239,13 +252,11 @@ def home():
     # Check if user is loggedin
     if 'loggedin' in session:
         # User is loggedin show them the home page
-        return render_template('homepage.html', email=session['email'])
+        #return render_template('homepage.html', email=session['email'])
+        return redirect(url_for('drivers'))
     # User is not loggedin redirect to login page
     return redirect(url_for('loginforowner'))
 
-@app.route('/DriverLogin')
-def DriverLogin():
-    return render_template('DriverLogin.html')
 
 
 
@@ -253,13 +264,23 @@ def DriverLogin():
 
 ##########################################################################################################
 ####### for homepage.html ##############
-@app.route('/names')
-def names():
-    
-    sql = "SELECT name FROM drivers"
-    mycursor.execute(sql)
-    result = mycursor.fetchall()
-    return render_template('second.html', names=result)
+@app.route('/drivers')
+def drivers():
+    # Execute a SELECT query to fetch the names from the drivers table
+    cursor = db.cursor()
+    query = 'SELECT name, vehicle FROM drivers'
+    cursor.execute(query)
+    data = cursor.fetchall()
+    names = []
+    for row in data:
+        names.append(row)
+    cursor.close()
+    db.close()
+    # Render the template with the list of names
+    return render_template('homepage.html', names=names)
+
+##############################################################################################################
+
 
 
 @app.route('/video')
