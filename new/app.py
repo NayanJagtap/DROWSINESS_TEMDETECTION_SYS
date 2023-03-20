@@ -27,8 +27,6 @@ app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']=''
 app.config['MYSQL_DB']='drowsiness_detection_system'
-#conn=mysql.connector.connect(host="sql12.freesqldatabase.com",user="sql12604243",password="bQAq7uTvqJ",database="sql12604243")
-#cursor=conn.cursor()
 #initilize mysql 
 mysql=MySQL(app)
 def generate_frames():
@@ -217,9 +215,6 @@ def third():
 def loginforowner():
     return render_template('loginforowner.html')
 
-@app.route('/registration')
-def registration():
-    return render_template('registration.html')
 
 @app.route('/login_validation',methods=['GET','POST'])
 def login_validation():
@@ -280,8 +275,54 @@ def drivers():
     return render_template('homepage.html', names=names)
 
 ##############################################################################################################
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'POST':
+        firstName = request.form['firstName']
+        secondName=request.form['secondName']
+        phoneNo=request.form['phoneNo']
+        email=request.form['email']
+        password=request.form['password']
+        vehicleno=request.form['vehicleno']
+        query = "SELECT * FROM users WHERE email = %s AND vehicleno = %s"
+        param = (email,vehicleno)
+        cursor = db.cursor()
+        cursor.execute(query,param)
+        result = cursor.fetchone()
+        if result:
+            print("Data already exists")
+            return "Data already exists"
+        else:
+            query = "INSERT INTO users (firstName,secondName,phoneNo,email,password,vehicleno) VALUES (%s, %s,%s,%s,%s,%s)"
+            params = (firstName,secondName,phoneNo,email,password,vehicleno)
+            cursor.execute(query, params)
+            db.commit()
+            print("Data inserted successfully")
+            return "Data inserted successfully"
+    else:
+        return render_template('registration.html')
+############################################################################################################################################
+# when clicked on send otp
+def generate_otp():
+    otp = random.randint(1000, 9999)
+    return otp
 
+def store_otp(name, vehicle_number, otp):
+    c = db.cursor()
+    c.execute("INSERT INTO drivers (name, vehicle_number, otp) VALUES (?, ?, ?)", (name, vehicle_number, otp))
+    db.commit()
+    db.close()
 
+# Define a route to handle the form submission
+@app.route('/homepage', methods=['POST'])
+def homepage():
+    name = request.form['name']
+    vehicle = request.form['vehicle']
+    otp = generate_otp()
+    store_otp(name, vehicle, otp)
+    return render_template('homepage.html', otp=otp)
+
+#################################################################################################################################################
 
 @app.route('/video')
 def video():

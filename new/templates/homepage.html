@@ -32,31 +32,65 @@
     <style>
         .card {
           border: 1px solid black;
-          padding: 10px;
-          width: 200px;
-          height: 200px;
+          padding: 20px;
+          width: 300px;
+          height: 500px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 24px;
+          font-size: 30px;
           font-weight: bold;
         }
         .grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          grid-gap: 20px;
+          grid-gap: 40px;
+          grid-row-end: auto;
+          position:relative;
+          left:10%;
         }
-      </style>
 
-      <h1>Drivers</h1>
-      <div class="grid">
-        {% for name in names[:7] %}
-          <div class="card">
-            <h6>Driver Name:{{ name[0] }}</h6>
-            <h6>Vehicle Number:{{name[1]}} </h6> 
-          </div>
-        {% endfor %}
-  </div>
+      .box{
+        width:auto;
+      }
+      .box {
+        font-size: 20px; /* Set the font size to 14 pixels */
+      }
+      
+      .box label {
+        font-size: 20px; /* Set the font size of the label to 12 pixels */
+      }
+      
+      .box input[type="text"] {
+        font-size: 20px; /* Set the font size of the input box to 12 pixels */
+      }
+      </style>
+      
+      <form method="POST" >
+        <h1>Drivers</h1>
+        <div class="grid">
+            {% for name in names[:7] %}
+                <div class="card">
+                    <h6>Driver Name: {{ name[0] }}</h6>
+                    <h6>Vehicle Number: {{ name[1] }}</h6> 
+                    <!---Submit Button-->
+                    <div class="box" style="background: #2d3e3f">
+                        <input type="hidden" name="driver_name" value="{{ name[0] }}">
+                        <input type="hidden" name="vehicle_number" value="{{ name[1] }}">
+                        <input type="Submit" name="send_otp" class="submit" value="SEND OTP">
+                    </div>
+                    <!---Submit Button-->
+                    <div class="box">
+                        <label for="otp">Your OTP is</label>
+                        <input type="text" id="otp" name="otp" value="{{otp}}"readonly>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </form>
+    
+
+
     
 
 </body>
