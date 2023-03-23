@@ -1,5 +1,6 @@
 
 
+from re import L
 from sqlite3 import Cursor
 from ssl import SSLSession
 from urllib import request
@@ -11,6 +12,7 @@ import MySQLdb.cursors
 import cv2
 import mysql.connector
 import json
+from playsound import playsound
 
 app=Flask(__name__)
 #camera=cv2.VideoCapture(0)
@@ -25,6 +27,7 @@ db = mysql.connector.connect(
   password="",
   database="drowsiness_detection_system"
 )
+
 
 app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
@@ -68,6 +71,7 @@ def generate_frames():
 
 
             from imutils import face_utils
+            sound_file_path = 'static/alarm.mp3'
 
 
             #initializing the camera and taking the instance
@@ -146,6 +150,7 @@ def generate_frames():
                         if(sleep>6):   #if sleepy status exceeds 6 frames then
                             status="!!!SLEEPING!!!"
                             color=(255,0,0)
+                            playsound(sound_file_path)
 
 
                     elif(left_blink==1 or right_blink==1):
@@ -155,6 +160,8 @@ def generate_frames():
                         if(drowsy>6):
                             status="DROWSY !"
                             color=(0,0,225)
+                            sound_file_drowsy = 'static/drowsy.mp3'
+                            playsound(sound_file_drowsy)
                             
                                 
                     else:
@@ -270,15 +277,13 @@ def home():
 @app.route('/drivers')
 def drivers():
     # Execute a SELECT query to fetch the names from the drivers table
-    cursor = db.cursor()
+    cursor=db.cursor()
     query = 'SELECT name, vehicle FROM drivers'
     cursor.execute(query)
     data = cursor.fetchall()
     names = []
     for row in data:
         names.append(row)
-    cursor.close()
-    db.close()
     # Render the template with the list of names
     return render_template('homepage.html', names=names)
 
@@ -320,6 +325,12 @@ def registration():
 @app.route('/video')
 def video():
     return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+
+#############################################################
+@app.route('/directlydriverlogin')
+def directlydriverlogin():
+    return render_template('DriverLogin.html')
+#############################################################
 
 
 with open('config.json','r') as f:

@@ -45,7 +45,6 @@
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           grid-gap: 40px;
-          grid-row-end: auto;
           position:relative;
           left:10%;
         }
@@ -64,30 +63,30 @@
       .box input[type="text"] {
         font-size: 20px; /* Set the font size of the input box to 12 pixels */
       }
+
       </style>
       
-      <form action="http://localhost:5000/DriverLogin" method="POST">
-        <h1>Drivers</h1>
-        <div class="grid">
-            {% for name in names[:7] %}
-                <div class="card">
-                    <h6>Driver Name: {{ name[0] }}</h6>
-                    <h6>Vehicle Number: {{ name[1] }}</h6> 
-                    <!---Submit Button-->
-                    <div class="box" style="background: #2d3e3f">
+      <div class="grid">
+        {% for name in names[:7] %}
+            <div class="card">
+                <h6>Driver Name: {{ name[0] }}</h6>
+                <h6>Vehicle Number: {{ name[1] }}</h6> 
+                <!---Submit Button-->
+                <div class="box" style="background: #2d3e3f">
+                    <form action="http://localhost:5000/DriverLogin" method="POST">
                         <input type="hidden" name="driver_name" value="{{ name[0] }}">
                         <input type="hidden" name="vehicle_number" value="{{ name[1] }}">
-                        
                         <input type="text" name="email" placeholder="Email address">
                         <input type="submit" value="Send OTP" name="otp">
-                      </form>
-                    </div>
-                    
-                    </div>
+                    </form>
                 </div>
-            {% endfor %}
-        </div>
-    </form>
+            </div>
+        {% endfor %}
+    </div>
+    <form>
+    
+               
+    
     
 
 
