@@ -5,9 +5,12 @@ from ssl import SSLSession
 from urllib import request
 from flask import Flask,render_template,request,redirect,url_for,session,Response
 from flask_mysqldb import MySQL
+from flask_mail import Mail, Message
+import random
 import MySQLdb.cursors
 import cv2
 import mysql.connector
+import json
 
 app=Flask(__name__)
 #camera=cv2.VideoCapture(0)
@@ -27,7 +30,7 @@ app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']=''
 app.config['MYSQL_DB']='drowsiness_detection_system'
-#initilize mysql 
+
 mysql=MySQL(app)
 def generate_frames():
    while True:
@@ -215,6 +218,11 @@ def third():
 def loginforowner():
     return render_template('loginforowner.html')
 
+# @app.route('/DriverLogin')
+# def DriverLogin():
+#     return render_template('DriverLogin.html')
+
+
 
 @app.route('/login_validation',methods=['GET','POST'])
 def login_validation():
@@ -274,7 +282,9 @@ def drivers():
     # Render the template with the list of names
     return render_template('homepage.html', names=names)
 
-##############################################################################################################
+
+    
+
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     if request.method == 'POST':
@@ -301,32 +311,43 @@ def registration():
             return "Data inserted successfully"
     else:
         return render_template('registration.html')
-############################################################################################################################################
-# when clicked on send otp
-def generate_otp():
-    otp = random.randint(1000, 9999)
-    return otp
 
-def store_otp(name, vehicle_number, otp):
-    c = db.cursor()
-    c.execute("INSERT INTO drivers (name, vehicle_number, otp) VALUES (?, ?, ?)", (name, vehicle_number, otp))
-    db.commit()
-    db.close()
 
-# Define a route to handle the form submission
-@app.route('/homepage', methods=['POST'])
-def homepage():
-    name = request.form['name']
-    vehicle = request.form['vehicle']
-    otp = generate_otp()
-    store_otp(name, vehicle, otp)
-    return render_template('homepage.html', otp=otp)
+
 
 #################################################################################################################################################
 
 @app.route('/video')
 def video():
     return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+with open('config.json','r') as f:
+    params=json.load(f)['params']
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT']=465
+app.config['MAIL_USERNAME']=params['gmail-user']
+app.config['MAIL_PASSWORD']=params['gmail-password']
+app.config['MAIL_USE_TLS']=False
+app.config['MAIL_USE_SSL']=True
+mail =Mail(app)
+otp=random.randint(0000,9999)
+
+@app.route('/DriverLogin' ,methods=['GET', 'POST'])
+def DriverLogin():
+    email=request.form['email']
+    msg = Message("OTP" , sender='nayandinkarjagtap@gmail.com',recipients=[email])
+    msg.body=str(otp)
+    mail.send(msg)
+    return render_template("DriverLogin.html")
+
+@app.route('/validate',methods=["POST"])
+def validate():
+    password=request.form['otp']
+    if otp==int(password):
+         return redirect(url_for('video'))
+    return render_template('DriverLogin.html',msg="OTP is Wrong! try again")
 
 if __name__=="__main__":
     app.run(debug=True)
