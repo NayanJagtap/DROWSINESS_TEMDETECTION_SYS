@@ -19,7 +19,6 @@ app=Flask(__name__)
 app.secret_key="login"
 #database connection details
 
-
 # Establish a connection to the MySQL database
 db = mysql.connector.connect(
   host="localhost",
@@ -322,11 +321,30 @@ def registration():
 
 #################################################################################################################################################
 
-@app.route('/video')
+@app.route('/video', methods=['GET', 'POST'])
 def video():
-    return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    if request.method == 'POST':
+        checkbox_values = request.form.getlist('checkbox')
+        if all(checkbox_values):
+            # Execute your code here if all checkboxes are selected
+            return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        else:
+            return "Please select all checkboxes"
+    else:
+        return render_template('popup.html')
+
+@app.route('/checkbox', methods=['GET', 'POST'])
+def checkbox_form():
+    if request.method == 'POST':
+        # Process the form data here
+        pass
+    return render_template('popup.html')
+   
 
 #############################################################
+
+
+##########################################################
 @app.route('/directlydriverlogin')
 def directlydriverlogin():
     return render_template('DriverLogin.html')
