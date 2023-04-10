@@ -1,14 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Checkbox Form</title>
-  </head>
-  <body>
-    <form method="post">
-      <label><input type="checkbox" name="checkbox" value="1"> Checkbox 1</label><br>
-      <label><input type="checkbox" name="checkbox" value="2"> Checkbox 2</label><br>
-      <label><input type="checkbox" name="checkbox" value="3"> Checkbox 3</label><br>
-      <input type="submit" value="Submit">
-    </form>
-  </body>
+<head>
+    <title>Window</title>
+    <style>
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .close-btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #eee;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+		
+		  
+		  
+		  
+		  
+		  
+    </style>
+</head>
+<body>
+    {% if show_popup %}
+        <div class="popup">
+            <div class="popup-content">
+                <h1>!!! ALERT !!!</h1>
+                
+                <form action="{{ url_for('video') }}" method="POST">
+					<hr>
+					<h2><input type="checkbox" id="input">HAVE YOU TAKEN DRINK?</input></h2>
+					<hr>
+					<h2><input type="checkbox" id="input">ARE YOU HEALTHY??</input></h2>
+					<hr>
+                    <button type="submit" name="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        const closeBtn = document.querySelector('.close-btn');
+        const popup = document.querySelector('.popup');
+
+        closeBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+    </script>
+</body>
 </html>

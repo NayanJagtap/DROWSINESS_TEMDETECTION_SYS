@@ -323,23 +323,12 @@ def registration():
 
 @app.route('/video', methods=['GET', 'POST'])
 def video():
-    if request.method == 'POST':
-        checkbox_values = request.form.getlist('checkbox')
-        if all(checkbox_values):
-            # Execute your code here if all checkboxes are selected
-            return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-        else:
-            return "Please select all checkboxes"
-    else:
-        return render_template('popup.html')
+    if request.method == 'POST' and 'submit' in request.form:
+        return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return render_template('popup.html', show_popup=True)
 
-@app.route('/checkbox', methods=['GET', 'POST'])
-def checkbox_form():
-    if request.method == 'POST':
-        # Process the form data here
-        pass
-    return render_template('popup.html')
-   
+
+
 
 #############################################################
 
