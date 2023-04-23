@@ -1,5 +1,4 @@
 
-
 from re import L
 from sqlite3 import Cursor
 from ssl import SSLSession
@@ -21,17 +20,17 @@ app.secret_key="login"
 
 # Establish a connection to the MySQL database
 db = mysql.connector.connect(
-  host="db4free.net",
-  user="nayanjagtap",
-  password="nayanjagtap",
-  database="nayanjagtap"
+  host="localhost",
+  user="root",
+  password="",
+  database="drowsiness_detection_system"
 )
 
 
-app.config['MYSQL_HOST']='db4free.net'
-app.config['MYSQL_USER']='nayanjagtap'
-app.config['MYSQL_PASSWORD']='nayanjagtap'
-app.config['MYSQL_DB']='nayanjagtap'
+app.config['MYSQL_HOST']='localhost'
+app.config['MYSQL_USER']='root'
+app.config['MYSQL_PASSWORD']=''
+app.config['MYSQL_DB']='drowsiness_detection_system'
 
 mysql=MySQL(app)
 def generate_frames():
@@ -286,8 +285,28 @@ def drivers():
     # Render the template with the list of names
     return render_template('homepage.html', names=names)
 
-
     
+@app.route('/driversdatassubmit',methods=['GET','POST'])
+def driversdatassubmit():
+    if request.method == 'POST':
+        name=request.form['name']
+        vehicle=request.form['vehicle']
+        query = "SELECT * FROM drivers WHERE name = %s AND vehicle = %s"
+        param = (name,vehicle)
+        cursor = db.cursor()
+        cursor.execute(query,param)
+        result = cursor.fetchone()
+        if result:
+            print("Data already exists")
+            return "Data already exists"
+        else:
+            query = "INSERT INTO drivers (name,vehicle) VALUES (%s, %s)"
+            params = (name,vehicle)
+            cursor.execute(query, params)
+            db.commit()
+            print("Data inserted successfully")
+            return "Data inserted successfully"
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():

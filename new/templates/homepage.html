@@ -17,19 +17,21 @@
     <nav class="navbar d-flex p-3 bg-light">
         <div class="owner_div">
             
-            <h5 >{{email}} </h5>
+            
         </div>
 
 
         <div>
-            <button class="btn btn-sm btn-outline-secondary" type="button">Add Driver</button>
-            <button class="btn btn-sm btn-outline-secondary" type="button">Remove Driver</button>
-            <button class="btn btn-sm btn-outline-secondary" type="button">Logout</button>
-          
+            <button class="btn btn-sm btn-outline-secondary" type="button" id="button" onclick="toggleForm()">Add Driver</button>
         </div>
 
     </nav>
     <style>
+      body{
+        background-image:url("https://media.istockphoto.com/id/1248542684/vector/abstract-blurred-colorful-background.jpg?s=612x612&w=0&k=20&c=6aJX8oyUBsSBZFQUCJDP7KZ1y4vrf-wEH_SJsuq7B5I=");
+        background-repeat:no-repeat;
+        background-size:300%;
+      }
         .card {
           border: 1px solid black;
           padding: 20px;
@@ -63,17 +65,37 @@
       .box input[type="text"] {
         font-size: 20px; /* Set the font size of the input box to 12 pixels */
       }
+      #myForm {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+    }
+
+    #myForm form {
+      width: 300px;
+      margin: auto;
+      margin-top: 100px;
+      padding: 20px;
+      background-color:yellow;
+      border-radius: 5px;
+  }
 
       </style>
       
       <div class="grid">
-        {% for name in names[:7] %}
+        {% for name in names[:200] %}
             <div class="card">
                 <h6>Driver Name: {{ name[0] }}</h6>
                 <h6>Vehicle Number: {{ name[1] }}</h6> 
                 <!---Submit Button-->
                 <div class="box" style="background: #2d3e3f">
                     <form action="http://localhost:5000/DriverLogin" method="POST">
+                        <img src="https://www.kindpng.com/picc/m/14-148242_the-logo-kind-of-looks-like-a-person.png">
                         <input type="hidden" name="driver_name" value="{{ name[0] }}">
                         <input type="hidden" name="vehicle_number" value="{{ name[1] }}">
                         <input type="text" name="email" placeholder="Email address">
@@ -83,8 +105,35 @@
             </div>
         {% endfor %}
     </div>
-    <form>
     
+    <!-- Form that is initially hidden -->
+    <div id="myForm" style="display:none;" autocomplete="on" >
+      <h2>Driver Information</h2>
+      <form action="/driversdatassubmit" method="POST">
+          <label for="driverName">Driver Name:</label>
+          <input type="text" id="driverName" name="name"><br><br>
+
+          <label for="vehicleNumber">Vehicle Number:</label>
+          <input type="text" id="vehicleNumber" name="vehicle"><br><br>
+
+          <input type="Submit" name="Submit" class="submit">
+      </form>
+  </div>
+
+  <script>
+    function toggleForm() {
+        var form = document.getElementById("myForm");
+        if (form.style.display === "none") {
+            // Show the form if it's hidden
+            form.style.display = "block";
+        } else {
+            // Hide the form if it's visible
+            form.style.display = "none";
+        }
+    }
+</script>
+    
+
                
     
     

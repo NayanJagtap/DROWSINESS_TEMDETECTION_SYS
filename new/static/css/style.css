@@ -30,7 +30,7 @@ ul {
 :root {
     --font-family-roboto: "Roboto", sans-serif;
     --font-family-poppins: "Poppins", sans-serif;
-    --focus-color: #ea005e;
+    --focus-color: yellow;
 }
 
 html,
@@ -119,7 +119,7 @@ button:active {
 }
 
 :root {
-    --gradient: linear-gradient(to left top, #DD2476 10%, #FF512F 90%) !important;
+    --gradient: linear-gradient(to left top,red 10%, #FF512F 90%) !important;
   }
   
 
@@ -145,7 +145,7 @@ button:active {
   .btn:hover, .btn:focus {
         background: var(--gradient) !important;
     -webkit-background-clip: none !important;
-    -webkit-text-fill-color: #fb0b0b !important;
+    -webkit-text-fill-color: #eac0d3 !important;
     border: 5px solid #4f13dd !important; 
     box-shadow: #222 1px 0 10px;
     text-decoration: underline;
