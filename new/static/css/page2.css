@@ -1,7 +1,10 @@
 body{
     text-align:center;
-    background-color:#ffcc8e;
+    background-image: url("/static/images/driving.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
   }
+  
   
   .button1,.button2{
     position:relative;

@@ -21,17 +21,17 @@ app.secret_key="login"
 
 # Establish a connection to the MySQL database
 db = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="",
-  database="drowsiness_detection_system"
+  host="db4free.net",
+  user="nayanjagtap",
+  password="nayanjagtap",
+  database="nayanjagtap"
 )
 
 
-app.config['MYSQL_HOST']='localhost'
-app.config['MYSQL_USER']='root'
-app.config['MYSQL_PASSWORD']=''
-app.config['MYSQL_DB']='drowsiness_detection_system'
+app.config['MYSQL_HOST']='db4free.net'
+app.config['MYSQL_USER']='nayanjagtap'
+app.config['MYSQL_PASSWORD']='nayanjagtap'
+app.config['MYSQL_DB']='nayanjagtap'
 
 mysql=MySQL(app)
 def generate_frames():
@@ -83,8 +83,8 @@ def generate_frames():
 
             #this will help in predicting 68 crutial land marks like eye-brows,lips,etc and it is commonly used in augumented reality like 
             #snapchat filters
-            predictor=dlib.shape_predictor("C:\\Users\\NAYAN DINKAR JAGTAP\\Downloads\\archive\\shape_predictor_68_face_landmarks.dat")
-
+            predictor=dlib.shape_predictor( "C:\\Users\\NAYAN DINKAR JAGTAP\\Desktop\\Project\\project pp\\new\\archive\\shape_predictor_68_face_landmarks.dat")
+               
             #current states of variables
             sleep=0
             drowsy=0
@@ -181,7 +181,7 @@ def generate_frames():
                 # cv2.imshow("RESULT OF DETECTOR",face_frame)
                 ret,buffer=cv2.imencode('.jpg',frame)
                 frame=buffer.tobytes()
-                yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                yield(b'--frame\r\n' b'Content-Type: image/jpg\r\n\r\n' + frame + b'\r\n')
 
                 # key=cv2.waitKey(1)
                 # if key==0:
@@ -368,4 +368,5 @@ def validate():
     return render_template('DriverLogin.html',msg="OTP is Wrong! try again")
 
 if __name__=="__main__":
-    app.run(debug=True)
+   # app.run(debug=True)
+    app.run(port=5000)
